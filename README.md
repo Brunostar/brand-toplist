@@ -15,7 +15,7 @@ Frontend: simple mobile-friendly HTML/CSS in `public/toplist.html`
 ## Quick local (no Docker)
 1. Clone repo:
 ```bash
-git clone https://github.com/<you>/brand-toplist.git
+git clone https://github.com/brunostar/brand-toplist.git
 cd brand-toplist
 2. Install PHP deps:
 composer install
