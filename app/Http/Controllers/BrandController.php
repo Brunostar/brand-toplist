@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use Illuminate\Http\Request;
+use Stevebauman\Location\Facades\Location;
 
 class BrandController extends Controller
 {
@@ -12,15 +13,36 @@ class BrandController extends Controller
      */
     public function index(Request $request)
     {
-        // Get country from Cloudflare header (or default)
-        $country = $request->header('CF-IPCountry', 'default');
+        //  // Get the user's location based on their IP address
+        //  $userLocation = Location::get();
 
+        //  // Get the ISO 2-character country code, or 'default' if location is not found
+        //  $country = $userLocation ? $userLocation->countryCode : 'default';
+ 
+        //  // Query brands where the country matches the user's country,
+        //  // or where the country is 'default'.
+        //  $brands = Brand::where('country', $country)
+        //                  ->orWhere('country', 'default')
+        //                  ->get();
+ 
+        //  return response()->json($brands);
+        // First, check for a 'country' query parameter (for local testing/overrides)
+        $country = $request->query('country');
+
+        if (!$country) {
+            // If no query parameter, get the user's location via IP
+            $userLocation = Location::get();
+            $country = $userLocation ? $userLocation->countryCode : 'default';
+        }
+
+        // Query brands where the country matches the determined country code,
+        // or where the country is 'default'.
         $brands = Brand::where('country', $country)
                         ->orWhere('country', 'default')
                         ->get();
 
         return response()->json($brands);
-    }
+}
 
     /**
      * Show the form for creating a new resource.
