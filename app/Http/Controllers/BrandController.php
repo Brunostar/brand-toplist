@@ -32,7 +32,8 @@ class BrandController extends Controller
         if (!$country) {
             // If no query parameter, get the user's location via IP
             $userLocation = Location::get();
-            $country = $userLocation ? $userLocation->countryCode : 'default';
+            // $country = $userLocation ? $userLocation->countryCode : 'default';
+            $country = 'default';
         }
 
         // Query brands where the country matches the determined country code,
