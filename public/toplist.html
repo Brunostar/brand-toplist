@@ -1,12 +1,22 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Toplist — Brands</title>
   <style>
-    :root { --gap: 16px; --card-radius: 12px; --max-width: 800px; --text-color: #333; --border-color: #e2e8f0; --bg-color: #f7fafc; --card-bg: #fff; }
-    body { 
+    :root {
+      --gap: 16px;
+      --card-radius: 12px;
+      --max-width: 800px;
+      --text-color: #333;
+      --border-color: #e2e8f0;
+      --bg-color: #f7fafc;
+      --card-bg: #fff;
+    }
+
+    body {
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       margin: 0;
       padding: 24px;
@@ -15,10 +25,12 @@
       background: var(--bg-color);
       color: var(--text-color);
     }
-    .app { 
+
+    .app {
       width: 100%;
       max-width: var(--max-width);
     }
+
     .app-title {
       font-size: 2.5rem;
       font-weight: 700;
@@ -26,6 +38,7 @@
       text-align: center;
       margin-bottom: 24px;
     }
+
     header {
       display: flex;
       align-items: center;
@@ -34,6 +47,7 @@
       padding-bottom: 16px;
       border-bottom: 1px solid var(--border-color);
     }
+
     header input {
       flex: 1;
       padding: 10px 16px;
@@ -42,11 +56,13 @@
       font-size: 1rem;
       transition: box-shadow 0.2s, border-color 0.2s;
     }
+
     header input:focus {
       outline: none;
       border-color: #a0aec0;
       box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5);
     }
+
     #refreshBtn {
       padding: 10px 20px;
       border: none;
@@ -58,19 +74,23 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       transition: background-color 0.2s, box-shadow 0.2s, transform 0.1s;
     }
+
     #refreshBtn:hover {
       background-color: #0056b3;
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
+
     #refreshBtn:active {
       transform: translateY(1px);
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: var(--gap);
     }
+
     .card {
       background: var(--card-bg);
       border-radius: var(--card-radius);
@@ -78,31 +98,37 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       transition: transform 0.2s, box-shadow 0.2s;
     }
+
     .card:hover {
       transform: translateY(-4px);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
     }
+
     .card img {
       width: 100%;
       height: 140px;
       object-fit: cover;
       border-radius: 8px;
     }
+
     .brand-name {
       font-weight: 700;
       margin-top: 12px;
       font-size: 1.1rem;
       color: #1a202c;
     }
+
     .rating {
       color: #ff9900;
       margin-top: 4px;
     }
+
     .meta {
       font-size: 0.9rem;
       color: #718096;
       margin-top: 8px;
     }
+
     #empty {
       color: #718096;
       margin-top: 24px;
@@ -110,82 +136,38 @@
       font-size: 1.1rem;
       font-style: italic;
     }
+
     footer {
       margin-top: 24px;
       color: #a0aec0;
       font-size: 0.8rem;
       text-align: center;
     }
+
     @media (max-width: 500px) {
       .grid {
         grid-template-columns: 1fr;
       }
+
       .card img {
         height: 180px;
       }
     }
   </style>
 </head>
+
 <body>
   <div class="app">
     <div class="app-title">Toplist — Brands</div>
-    <header>
-      <input id="countryInput" placeholder="Country ISO (e.g., BG, MT, CM) — leave blank to auto-detect" />
-      <button id="refreshBtn">Refresh</button>
-    </header>
-
+    <header> <input id="countryInput" placeholder="Country ISO (e.g., BG, MT, CM) — leave blank to auto-detect" />
+      <button id="refreshBtn">Refresh</button> </header>
     <main>
       <div id="grid" class="grid"></div>
-      <div id="empty" style="display:none;">
-        No brands found.
-      </div>
+      <div id="empty" style="display:none;"> No brands found. </div>
     </main>
-
-    <footer>
-      Data from local API. Cloudflare deployment is coming soon. Currently using stevenbauman for ip location. (It is not very accurate)
-    </footer>
+    <footer> The CF-IPCountry header provided by CloudFlare determine the toplist. </footer>
   </div>
-
-  <script>
-    const grid = document.getElementById('grid');
-    const empty = document.getElementById('empty');
-    const countryInput = document.getElementById('countryInput');
-    const refreshBtn = document.getElementById('refreshBtn');
-
-    async function loadBrands() {
-      grid.innerHTML = '';
-      empty.style.display = 'none';
-      let url = '/api/brands';
-      const c = countryInput.value.trim().toUpperCase();
-      if (c) url += '?country=' + encodeURIComponent(c);
-
-      try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error('Fetch failed: ' + res.status);
-        const data = await res.json();
-        if (!data || data.length === 0) {
-          empty.style.display = 'block';
-          return;
-        }
-        for (const b of data) {
-          const el = document.createElement('div');
-          el.className = 'card';
-          el.innerHTML = `
-            <img src="${b.brand_image}" alt="${b.brand_name}">
-            <div class="brand-name">${b.brand_name}</div>
-            <div class="rating">${'★'.repeat(b.rating)}${'☆'.repeat(5-b.rating)}</div>
-            <div class="meta">Country: ${b.country ?? 'default'}</div>
-          `;
-          grid.appendChild(el);
-        }
-      } catch (err) {
-        empty.style.display = 'block';
-        empty.textContent = 'Error loading brands: ' + err.message;
-      }
-    }
-
-    refreshBtn.addEventListener('click', loadBrands);
-    window.addEventListener('load', loadBrands);
-  </script>
+  <script> const grid = document.getElementById('grid'); const empty = document.getElementById('empty'); const countryInput = document.getElementById('countryInput'); const refreshBtn = document.getElementById('refreshBtn'); async function loadBrands() { grid.innerHTML = ''; empty.style.display = 'none'; let url = '/index.php/api/brands'; const c = countryInput.value.trim().toUpperCase(); if (c) url += '?country=' + encodeURIComponent(c); try { const res = await fetch(url); if (!res.ok) throw new Error('Fetch failed: ' + res.status); const data = await res.json(); if (!data || data.length === 0) { empty.style.display = 'block'; return; } for (const b of data) { const el = document.createElement('div'); el.className = 'card'; el.innerHTML = ` <img src="${b.brand_image}" alt="${b.brand_name}"> <div class="brand-name">${b.brand_name}</div> <div class="rating">${'★'.repeat(b.rating)}${'☆'.repeat(5 - b.rating)}</div> <div class="meta">Country: ${b.country ?? 'default'}</div> `; grid.appendChild(el); } } catch (err) { empty.style.display = 'block'; empty.textContent = 'Error loading brands: ' + err.message; } } refreshBtn.addEventListener('click', loadBrands); window.addEventListener('load', loadBrands); </script>
 </body>
+
 </html>
