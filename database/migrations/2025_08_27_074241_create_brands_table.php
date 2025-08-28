@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('brand_name');
             $table->string('brand_image'); // store URL or path
             $table->integer('rating');
-            $table->string('country', 2)->nullable(); // ISO-2 country code
+            $table->string('country')->nullable(); // ISO-2 country code
             $table->timestamps();
         });
     }
