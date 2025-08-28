@@ -13,42 +13,17 @@ class BrandController extends Controller
      */
     public function index(Request $request)
     {
-        //  // Get the user's location based on their IP address
-        //  $userLocation = Location::get();
+        // Get country from CF-IPCountry header or 'default' if not present
+        $country = $request->header('CF-IPCountry', 'default');
 
-        //  // Get the ISO 2-character country code, or 'default' if location is not found
-        //  $country = $userLocation ? $userLocation->countryCode : 'default';
- 
-        //  // Query brands where the country matches the user's country,
-        //  // or where the country is 'default'.
-        //  $brands = Brand::where('country', $country)
-        //                  ->orWhere('country', 'default')
-        //                  ->get();
- 
-        //  return response()->json($brands);
-        // First, check for a 'country' query parameter (for local testing/overrides)
-        $country = $request->query('country');
-
-        if (!$country) {
-            // If no query parameter, get the user's location via IP
-            $userLocation = Location::get();
-            // $country = $userLocation ? $userLocation->countryCode : 'default';
-            $country = 'default';
-        }
-
-        // Query brands where the country matches the determined country code,
+        // Query brands where the country matches the user's country,
         // or where the country is 'default'.
-        if ($country) {
-            $brands = Brand::where('country', $country)
+        $brands = Brand::where('country', $country)
+                        // ->orWhere('country', 'default')
                         ->get();
-        } else {
-            $brands = Brand::where('country', 'default')
-                        ->get();
-        }
-        
 
         return response()->json($brands);
-}
+    }
 
     /**
      * Show the form for creating a new resource.
