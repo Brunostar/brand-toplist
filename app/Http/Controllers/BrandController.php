@@ -37,9 +37,14 @@ class BrandController extends Controller
 
         // Query brands where the country matches the determined country code,
         // or where the country is 'default'.
-        $brands = Brand::where('country', $country)
-                        ->orWhere('country', 'default')
+        if ($country) {
+            $brands = Brand::where('country', $country)
                         ->get();
+        } else {
+            $brands = Brand::where('country', 'default')
+                        ->get();
+        }
+        
 
         return response()->json($brands);
 }
