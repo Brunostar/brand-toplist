@@ -159,13 +159,15 @@
 <body>
   <div class="app">
     <div class="app-title">Toplist — Brands</div>
-    <header> <input id="countryInput" placeholder="Country ISO (e.g., BG, MT, CM) — leave blank to auto-detect" />
-      <button id="refreshBtn">Refresh</button> </header>
+    <header> 
+      <input style="display: none;" id="countryInput" placeholder="Country ISO (e.g., BG, MT, CM) — leave blank to auto-detect" />
+      <button style="display: none;" id="refreshBtn">Refresh</button> 
+    </header>
     <main>
       <div id="grid" class="grid"></div>
       <div id="empty" style="display:none;"> No brands found. </div>
     </main>
-    <footer> The CF-IPCountry header provided by CloudFlare determine the toplist. </footer>
+    <footer> The CF-IPCountry header provided by CloudFlare determines the toplist. </footer>
   </div>
   <script> const grid = document.getElementById('grid'); const empty = document.getElementById('empty'); const countryInput = document.getElementById('countryInput'); const refreshBtn = document.getElementById('refreshBtn'); async function loadBrands() { grid.innerHTML = ''; empty.style.display = 'none'; let url = '/index.php/api/brands'; const c = countryInput.value.trim().toUpperCase(); if (c) url += '?country=' + encodeURIComponent(c); try { const res = await fetch(url); if (!res.ok) throw new Error('Fetch failed: ' + res.status); const data = await res.json(); if (!data || data.length === 0) { empty.style.display = 'block'; return; } for (const b of data) { const el = document.createElement('div'); el.className = 'card'; el.innerHTML = ` <img src="${b.brand_image}" alt="${b.brand_name}"> <div class="brand-name">${b.brand_name}</div> <div class="rating">${'★'.repeat(b.rating)}${'☆'.repeat(5 - b.rating)}</div> <div class="meta">Country: ${b.country ?? 'default'}</div> `; grid.appendChild(el); } } catch (err) { empty.style.display = 'block'; empty.textContent = 'Error loading brands: ' + err.message; } } refreshBtn.addEventListener('click', loadBrands); window.addEventListener('load', loadBrands); </script>
 </body>
